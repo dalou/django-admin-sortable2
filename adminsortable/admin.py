@@ -63,10 +63,13 @@ class SortableAdminMixin(SortableAdminBase):
                                        % (model.__module__, model.__name__))
 
         super(SortableAdminMixin, self).__init__(model, admin_site)
+        
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + self.exclude if self.exclude else []
+            if type(self.exclude) == type(tuple()):
+                self.exclude = list(self.exclude)
+            self.exclude = [self.default_order_field] + self.exclude
         if not getattr(self, 'change_list_template', None):
             self.change_list_template = 'adminsortable/change_list.html'
         if not self.list_display_links:
