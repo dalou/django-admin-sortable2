@@ -61,12 +61,12 @@ class SortableAdminMixin(SortableAdminBase):
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (model.__module__, model.__name__))
-        print self.default_order_field   
+
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + self.exclude
+            self.exclude = [self.default_order_field] + self.exclude if self.exclude else []
         if not getattr(self, 'change_list_template', None):
             self.change_list_template = 'adminsortable/change_list.html'
         if not self.list_display_links:
