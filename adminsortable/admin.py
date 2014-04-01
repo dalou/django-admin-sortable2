@@ -56,7 +56,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         if getattr(self, 'sortable_order_field', None):
-            self.default_order_field = self.self.default_order_field
+            self.default_order_field = self.sortable_order_field
         else:
             try:
                 self.default_order_field = model._meta.ordering[0].lstrip('-')
@@ -248,7 +248,7 @@ class SortableAdminMixin(SortableAdminBase):
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         if getattr(self, 'sortable_order_field', None):
-            self.default_order_field = self.self.default_order_field
+            self.default_order_field = self.sortable_order_field
         else:
             try:
                 self.default_order_field = self.model._meta.ordering[0]
