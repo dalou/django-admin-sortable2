@@ -55,11 +55,13 @@ class SortableAdminMixin(SortableAdminBase):
     PREV, NEXT, FIRST, LAST = range(4)
 
     def __init__(self, model, admin_site):
-        
-        try:
-            self.default_order_field = model._meta.ordering[0].lstrip('-')
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+        if getattr(self, 'sortable_order_field', None):
+            self.default_order_field = self.self.default_order_field
+        else:
+            try:
+                self.default_order_field = model._meta.ordering[0].lstrip('-')
+            except (AttributeError, IndexError):
+                raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (model.__module__, model.__name__))
 
         super(SortableAdminMixin, self).__init__(model, admin_site)
@@ -245,10 +247,13 @@ class SortableAdminMixin(SortableAdminBase):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        try:
-            self.default_order_field = self.model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+        if getattr(self, 'sortable_order_field', None):
+            self.default_order_field = self.self.default_order_field
+        else:
+            try:
+                self.default_order_field = self.model._meta.ordering[0]
+            except (AttributeError, IndexError):
+                raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
         self.form.base_fields[self.default_order_field].is_hidden = True
